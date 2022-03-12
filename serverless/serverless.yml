@@ -1,0 +1,103 @@
+service: ws-chat-aws-stack
+
+provider:
+  name: aws
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ap-northeast-1'}
+  runtime: nodejs14.x
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+      Resource:
+          - Fn::GetAtt: [ ConnectionsTable, Arn ]
+          - Fn::GetAtt: [ MessagesTable, Arn ]
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:service}-connections-${self:provider.stage}/index/*"
+  environment:
+    CONNECTION_TABLE_NAME:
+      Ref: ConnectionsTable
+    MESSAGE_TABLE_NAME:
+      Ref: MessagesTable
+  websocketsApiName: ${self:service}-${self:provider.stage}
+  websocketsApiRouteSelectionExpression: $request.body.message
+
+functions:
+  connectHandler:
+    handler: connect/app.handler
+    events:
+      - websocket: $connect
+  disconnectHandler:
+    handler: disconnect/app.handler
+    events:
+      - websocket: $disconnect
+  sendMessageHandler:
+    handler: sendMessage/app.handler
+    events:
+      - websocket: sendMessage
+
+resources:
+  Resources:
+    ConnectionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-ws-connection-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: roomId
+            AttributeType: S
+          - AttributeName: connectionId
+            AttributeType: S
+          - AttributeName: lastReceiveMessageId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: roomId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: connectionId-index
+            KeySchema:
+              - AttributeName: connectionId
+                KeyType: HASH
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+            Projection:
+              ProjectionType: ALL
+        SSESpecification:
+          SSEEnabled: False
+    MessagesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-messages-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: roomId
+            AttributeType: S
+          - AttributeName: messageId
+            AttributeType: S
+          - AttributeName: message_body
+            AttributeType: S
+        KeySchema:
+          - AttributeName: roomId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 2
+        GlobalSecondaryIndexes:
+          - IndexName: messageId-index
+            KeySchema:
+              - AttributeName: messageId
+                KeyType: HASH
+            ProvisionedThroughput:
+              ReadCapacityUnits: 10
+              WriteCapacityUnits: 2
+            Projection:
+              ProjectionType: ALL
+        SSESpecification:
+          SSEEnabled: Fals
