@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+    environment:
+      SERVICES: apigateway,lambda,dynamodb,s3
+      DATA_DIR: /tmp/localstack/data
+      HOSTNAME_EXTERNAL: localstack
+      DEFAULT_REGION: ap-northeast-1
+      LAMBDA_EXECUTOR: docker-reuse
+      DEBUG: 1
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      DISABLE_CORS_CHECKS: 1
+    volumes:
+      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
