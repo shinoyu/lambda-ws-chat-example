@@ -1,5 +1,19 @@
 service: ws-chat-aws-stack
 
+plugins:
+  - serverless-localstack
+
+custom:
+  localstack:
+    stages:
+      - local
+    edgePort: 4566
+    autostart: true
+    lambda:
+      mountCode: True
+    docker:
+      sudo: False
+
 provider:
   name: aws
   stage: ${opt:stage, 'dev'}
