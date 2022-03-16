@@ -4,6 +4,7 @@ Example: web socket message app on AWS.
 ## Tools to use.
 
 - localstack on docker
+- pnpm
 - vita
 - serverless framework
 
@@ -13,8 +14,8 @@ Example: web socket message app on AWS.
 Using serverless framework on localstack.
 
 ```
-npm install -g serverless
-npm install --save-dev serverless-localstack
+pnpm install -g serverless
+pnpm install --save-dev serverless-localstack
 ```
 
 ## Usage
