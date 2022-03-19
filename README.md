@@ -22,6 +22,10 @@ pnpm install --save-dev serverless-localstack
 
 1. Run docker compose up `localstack`
 2. Move to `serveless` dir & run `serverless deploy`
+   
+   for localStack. run`serverlsss deploy -s local`
+   
+   ***requirements: LocalStack Pro.**
 3. Move to `ws-chat-client` dir & run `vite dev`.
 4. Open (localhost)[http://localhost:3000] on 2 browser tab.
 5. Send message.
