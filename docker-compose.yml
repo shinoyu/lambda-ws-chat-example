@@ -7,7 +7,7 @@ services:
       - "4566:4566"
       - "4571:4571"
     environment:
-      SERVICES: apigateway,lambda,dynamodb,s3
+      SERVICES: cloudformation,apigateway,lambda,dynamodb,s3
       DATA_DIR: /tmp/localstack/data
       HOSTNAME_EXTERNAL: localstack
       DEFAULT_REGION: ap-northeast-1
