@@ -97,4 +97,4 @@ resources:
             Projection:
               ProjectionType: ALL
         SSESpecification:
-          SSEEnabled: Fals
+          SSEEnabled: False
