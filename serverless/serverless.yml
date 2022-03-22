@@ -2,7 +2,7 @@ service: ws-chat-aws-stack
 
 provider:
   name: aws
-  stage: ${opt:stage, 'dev'}
+  stage: ${opt:stage, 'development'}
   region: ${opt:region, 'ap-northeast-1'}
   runtime: nodejs14.x
   iamRoleStatements:
