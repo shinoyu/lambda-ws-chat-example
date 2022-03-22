@@ -53,8 +53,6 @@ resources:
             AttributeType: S
           - AttributeName: connectionId
             AttributeType: S
-          - AttributeName: lastReceiveMessageId
-            AttributeType: S
         KeySchema:
           - AttributeName: roomId
             KeyType: HASH
@@ -81,8 +79,6 @@ resources:
           - AttributeName: roomId
             AttributeType: S
           - AttributeName: messageId
-            AttributeType: S
-          - AttributeName: message_body
             AttributeType: S
         KeySchema:
           - AttributeName: roomId
