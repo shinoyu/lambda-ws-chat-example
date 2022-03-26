@@ -1,4 +1,0 @@
-bucket = "development-ws-chat-example-tf-backend"
-key = "development/terraform.tfstate"
-region = "ap-northeast-1"
-encrypt = true
