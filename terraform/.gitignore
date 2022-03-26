@@ -1,5 +1,0 @@
-.terraform/
-*.tfstate
-*.tfstate.backup
-.keypair.tfvars
-*.secret.tfvars
