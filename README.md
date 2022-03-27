@@ -20,12 +20,10 @@ pnpm install --save-dev serverless-localstack
 
 ## Usage
 
-1. Run docker compose up `localstack`
+1. Create and setup AWS Account, then create aws profile for the runnable suverless iac operation.
 2. Move to `serveless` dir & run `serverless deploy`
-   
-   for localStack. run`serverlsss deploy -s local`
-   
-   ***requirements: LocalStack Pro.**
-3. Move to `ws-chat-client` dir & run `vite dev`.
-4. Open (localhost)[http://localhost:3000] on 2 browser tab.
-5. Send message.
+3. Move to `ws-chat-client` dir.
+4. Define settings in .env.local as in .env variables.
+5. run `vite dev`.
+6. Open (localhost)[http://localhost:3000] on 2 browser tab.
+7. Send message.
