@@ -5,6 +5,6 @@
 
 
 ```
-sls deploy --stage {stage} --aws-profile {run-profile}
+sls --stage {stage} --aws-profile {run_profile} deploy
 ```
 
