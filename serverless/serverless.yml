@@ -101,3 +101,7 @@ resources:
 
 plugins:
   - serverless-layers
+
+custom:
+  serverless-layers:
+    layersDeploymentBucket: ${self:service}-${self:provider.stage}-serverless-layers
