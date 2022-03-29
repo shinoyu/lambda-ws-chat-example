@@ -1,5 +1,5 @@
-import { DynamoDB } from '@aws-sdk/client-dynamodb'
 const { CONNECTION_TABLE_NAME } = process.env
+import { DynamoDBClient as DynamoDB } from '@aws-sdk/client-dynamodb'
 
 exports.handler = function (event, context, callback) {
     
