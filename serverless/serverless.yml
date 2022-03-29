@@ -98,3 +98,6 @@ resources:
               ProjectionType: ALL
         SSESpecification:
           SSEEnabled: False
+
+plugins:
+  - serverless-layers
