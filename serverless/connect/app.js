@@ -1,5 +1,5 @@
 const { CONNECTION_TABLE_NAME, MESSAGE_TABLE_NAME } = process.env
-import { DynamoDBClient as DynamoDB } from '@aws-sdk/client-dynamodb'
+import { DynamoDB } from 'aws-sdk';
 
 exports.handler = function (event, context, callback) {
   let roomId = ''
@@ -15,7 +15,10 @@ exports.handler = function (event, context, callback) {
     }
   }
 
-  const dynamoClient = new DynamoDB({ region: process.env.AWS_REGION });
+  const dynamoClient = new DynamoDB({
+    apiVersion: '2012-08-10',
+    region: process.env.AWS_REGION 
+  });
   dynamoClient.putItem(putParams, (err) => {
     callback(null, {
       statusCode: err ? 500 : 200,
