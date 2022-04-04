@@ -1,5 +1,5 @@
 {
-    "type": "module",
+    "type": "commonjs",
     "scripts": {},
     "devDependencies": {
         "serverless-layers": "^2.5.4-beta.1"

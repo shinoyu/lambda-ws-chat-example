@@ -1,11 +1,12 @@
 const { CONNECTION_TABLE_NAME, MESSAGE_TABLE_NAME } = process.env
-import { DynamoDB } from 'aws-sdk';
+const AWS = require('aws-sdk');
 
 exports.handler = function (event, context, callback) {
   let roomId = ''
   if (event.queryStringParameters && event.queryStringParameters.roomId) {
     roomId = event.queryStringParameters.roomId
   }
+  // TODO: roomId undefined, brake connection.
 
   const putParams = {
     TableName: CONNECTION_TABLE_NAME,
@@ -15,7 +16,7 @@ exports.handler = function (event, context, callback) {
     }
   }
 
-  const dynamoClient = new DynamoDB({
+  const dynamoClient = new AWS.DynamoDB({
     apiVersion: '2012-08-10',
     region: process.env.AWS_REGION 
   });

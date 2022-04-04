@@ -1,12 +1,15 @@
 const { CONNECTION_TABLE_NAME, MESSAGE_TABLE_NAME } = process.env
-import { DynamoDBClient as DynamoDB } from '@aws-sdk/client-dynamodb'
-import { ApiGatewayManagementApiClient } from "@aws-sdk/client-apigatewaymanagementapi";
+const AWS = require('aws-sdk');
+// import { ApiGatewayManagementApiClient } from "@aws-sdk/client-apigatewaymanagementapi";
 
 exports.handler = async (event, context) => {
   const roomId = JSON.parse(event.body).roomId
   const senderConnectionId = event.requestContext.connectionId
-  const dynamoClient = new DynamoDB({ region: process.env.AWS_REGION });
-  const apigwManagementClient = new ApiGatewayManagementApiClient({
+  const dynamoClient = new AWS.DynamoDB({
+    apiVersion: '2012-08-10',
+    region: process.env.AWS_REGION 
+  });
+  const apigwManagementClient =  new AWS.ApiGatewayManagementApi({
     region: process.env.AWS_REGION,
     endpoint: event.requestContext.domainName + '/' + event.requestContext.stage
   })
