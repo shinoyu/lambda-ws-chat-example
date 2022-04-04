@@ -6,17 +6,17 @@ export type Message = {
     senderId: string,
     attachments: Attachemnt[] 
 }
-
 export type Attachemnt = {
     contentType: string,
     url: string
 }
 
-export const useChatConnection = (ws: string) => {
+export const useChatConnection = (ws: string, roomId: string) => {
     const [connectionId, setConnectionId ] = useState(null)
     const [messages, setMessages ] = useState([] as Message[])
 
-    const client = useMemo(() => new W3cWebSocket(ws) , [ws])
+    const url = useMemo(() => `${ws}?roomId=${roomId}`, [ws, roomId])
+    const client = useMemo(() => new W3cWebSocket(url), [url])
     const errorHandle = useCallback((error: Error) => {
 
     }, [client]);
