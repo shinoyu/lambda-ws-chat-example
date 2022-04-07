@@ -41,7 +41,7 @@ functions:
   sendMessageHandler:
     handler: sendMessage/app.handler
     events:
-      - websocket: sendMessage
+      - websocket: sendmessage
 resources:
   Resources:
     ConnectionsTable:
