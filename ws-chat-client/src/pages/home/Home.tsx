@@ -5,14 +5,13 @@ import { formCss, formRowCss } from './Home.css';
 
 export const Home = (Props) => {
     const wsHost = "";
-    const roomId =  "room1";
     const connectionId = useMemo(() => { return Math.random().toString(36).slice(-8)}, [])
     const [state, setState] = useState({
       message: "",
+      roomId: "",
     });
 
-    const { sendMessage, messages } = useChatConnection(wsHost, roomId)
-
+    const {openWs, isConnected, sendMessage, messages } = useChatConnection()
     const renderMessages = useCallback(() =>  {
         return <>
           {messages.forEach((msg) => {
@@ -26,15 +25,44 @@ export const Home = (Props) => {
         </>
     }, [messages]);
 
-    const handleChange = useCallback((event) => {
-        setState({...state, [event.target.name]: event.target.value });
-    }, []);
+    const renderRoomIdForm = () => {
+      if (!isConnected) {
+        return <>
+         <form onSubmit={handleConnectSubmit} >
+            <label>
+              RoomId:
+              <input
+                type="text"
+                name="roomId"
+                value={state.roomId}
+                onChange={handleChange}
+              />
+              <button type='submit'>通信開始</button>
+            </label>
+          </form>
+        </>      
+      } else {
+        return <>
+          RoomId: { state.roomId } 
+        </>
+      }
+    }
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement> ) => {
+      setState({...state, [event.target.name]: event.target.value });
+    }
+
+    const handleConnectSubmit = useCallback((e) => {
+      e.preventDefault();
+      openWs(wsHost, state.roomId)
+    }, [state.roomId])
 
     const handleSubmit = useCallback((e) => {
       if (e) e.preventDefault();
       sendMessage({
         senderId: connectionId,
         body: state.message,
+        roomId: state.roomId,
         attachments: []
       });
     }, [state, sendMessage])
@@ -47,7 +75,7 @@ export const Home = (Props) => {
               ID: {connectionId}
             </div>
             <div>
-              RoomId: {roomId}
+              { renderRoomIdForm() }
             </div>
         </div>
         <form className={formCss} onSubmit={handleSubmit} >
