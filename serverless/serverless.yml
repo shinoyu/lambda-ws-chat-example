@@ -27,7 +27,7 @@ provider:
     MESSAGE_TABLE_NAME:
       Ref: MessagesTable
   websocketsApiName: ${self:service}-${self:provider.stage}
-  websocketsApiRouteSelectionExpression: $request.body.message
+  websocketsApiRouteSelectionExpression: $request.body.action
 
 functions:
   connectHandler:

@@ -50,7 +50,9 @@ export const useChatConnection = () => {
     }, [client])
 
     const sendMessage = useCallback((message: Message) => {
-        const data = JSON.stringify(message)
+        const data = JSON.stringify({
+            action: 'sendmessage',  ...message
+        })
         client.send(data)
     }, [client])
     
