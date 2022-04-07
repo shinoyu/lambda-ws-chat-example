@@ -1,17 +1,21 @@
 const { CONNECTION_TABLE_NAME, MESSAGE_TABLE_NAME } = process.env
 const AWS = require('aws-sdk');
 
-exports.handler = function (event, context, callback) {
+exports.handler = (event, context, callback) => {
   let roomId = ''
   if (event.queryStringParameters && event.queryStringParameters.roomId) {
     roomId = event.queryStringParameters.roomId
+  } else {
+    callback(null, {
+      statusCode: 500,
+      body: "need roomId Params"
+    });
   }
-  // TODO: roomId undefined, brake connection.
-
+  const connectionId = event.requestContext.connectionId
   const putParams = {
     TableName: CONNECTION_TABLE_NAME,
     Item: {
-      connectionId: { S: event.requestContext.connectionId },
+      connectionId: { S: connectionId },
       roomId: { S: roomId }
     }
   }
@@ -21,12 +25,13 @@ exports.handler = function (event, context, callback) {
     region: process.env.AWS_REGION 
   });
   dynamoClient.putItem(putParams, (err) => {
-    callback(null, {
-      statusCode: err ? 500 : 200,
-      body: err ? 'Failed to connect: ' + JSON.stringify(err) : 'Connected.'
-    })
+    if (err) {
+      callback(null, {
+        statusCode: 500,
+        body: 'Failed to connect: ' + JSON.stringify(err)
+      });
+    } else {
+      callback(null, { statusCode: 200, body: 'connedted'});
+    }
   })
-
-  // TODO: テーブルに残っている未送信データがあったら、wsチャンネルを開いて送信し、
-  // 接続者側に受信させる
 }
