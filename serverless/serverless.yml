@@ -34,6 +34,7 @@ functions:
     handler: connect/app.handler
     events:
       - websocket: $connect
+      - websocket: $default
   disconnectHandler:
     handler: disconnect/app.handler
     events:
