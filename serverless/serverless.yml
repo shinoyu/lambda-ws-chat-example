@@ -50,20 +50,20 @@ resources:
       Properties:
         TableName: ${self:service}-ws-connection-${self:provider.stage}
         AttributeDefinitions:
-          - AttributeName: roomId
-            AttributeType: S
           - AttributeName: connectionId
             AttributeType: S
-        KeySchema:
           - AttributeName: roomId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connectionId
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         GlobalSecondaryIndexes:
-          - IndexName: connectionId-index
+          - IndexName: roomId_index
             KeySchema:
-              - AttributeName: connectionId
+              - AttributeName: roomId
                 KeyType: HASH
             ProvisionedThroughput:
               ReadCapacityUnits: 1
