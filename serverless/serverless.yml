@@ -20,7 +20,9 @@ provider:
     - Effect: Allow
       Action:
         - dynamodb:Query
-      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:service}-connections-${self:provider.stage}/index/*"
+      Resource: 
+          - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:service}-ws-connection-${self:provider.stage}/index/*"
+          - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:service}-messages-${self:provider.stage}/index/*"
   environment:
     CONNECTION_TABLE_NAME:
       Ref: ConnectionsTable
