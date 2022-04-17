@@ -23,8 +23,7 @@ const eventToMessage = (event: IMessageEvent): Message => {
     }
 }
 
-export const useChatConnection = (userToken: string) => {
-    const [senderId, _setSenderId ] = useState(userToken)
+export const useChatConnection = () => {
     const [messages, setMessages ] = useState(() => { return [] as Message[]})
     const [isConnected, setIsConnected] = useState(false)
     const [client, setClient] = useState(null as unknown as w3cwebsocket)
@@ -63,7 +62,6 @@ export const useChatConnection = (userToken: string) => {
     const sendMessage = useCallback((message: Message) => {
         const data = JSON.stringify({
             ...message,
-            senderId: senderId,
             action: 'sendmessage'
         })
         client.send(data)

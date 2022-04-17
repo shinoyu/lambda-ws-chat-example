@@ -4,23 +4,25 @@ import { useChatConnection, Message } from '../../hooks/useChatConnection';
 import { formCss, formRowCss } from './Home.css';
 
 export const Home = (Props) => {
-    const connectionId = useMemo(() => { return Math.random().toString(36).slice(-8)}, [])
-    const userToken = useMemo(() => { return Math.random().toString(36).slice(-8)}, [])
     const [state, setState] = useState({
       message: "",
       roomId: "",
+      userToken: ""
     });
 
-    const {openWs, isConnected, sendMessage, messages } = useChatConnection(userToken)
+    const {openWs, isConnected, sendMessage, messages } = useChatConnection(state.userToken)
     const renderMessages = useCallback(() =>  {
         return <>
-          {messages.forEach((msg) => {
+          {messages.map((msg) => {
             // TDDO: 後で分岐考える
-            if (userToken === msg.senderId) {
-                <div>{ msg.body }</div>
+            if (state.userToken === msg.senderId) {
+              return <div>
+                { `${msg.senderId}(my): ${msg.body}` }
+              </div>
             } else {
-                <div>{ msg.body }</div>
-            }
+              return <div>
+                { `${msg.senderId}: ${msg.body}` }                 
+              </div>            }
           })}
         </>
     }, [messages]);
@@ -29,21 +31,37 @@ export const Home = (Props) => {
       if (!isConnected) {
         return <>
          <form onSubmit={handleConnectSubmit} >
+           <div>
             <label>
-              RoomId:
-              <input
-                type="text"
-                name="roomId"
-                value={state.roomId}
-                onChange={handleChange}
-              />
-              <button type='submit'>通信開始</button>
-            </label>
+                user:
+                <input
+                  type="text"
+                  name="userToken"
+                  value={state.userToken}
+                  onChange={handleChange}
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                RoomId:
+                <input
+                  type="text"
+                  name="roomId"
+                  value={state.roomId}
+                  onChange={handleChange}
+                />
+              </label>
+            </div>
+            <button type='submit'>通信開始</button>
           </form>
         </>      
       } else {
         return <>
-          RoomId: { state.roomId } 
+          <p>
+            user: { state.userToken }<br/>
+            RoomId: { state.roomId } 
+          </p>
         </>
       }
     }
@@ -60,7 +78,7 @@ export const Home = (Props) => {
     const handleSubmit = useCallback((e) => {
       if (e) e.preventDefault();
       sendMessage({
-        senderId: undefined,
+        senderId: state.userToken,
         body: state.message,
         roomId: state.roomId,
         attachments: []
@@ -71,9 +89,6 @@ export const Home = (Props) => {
     return <>
       <main>
         <div className={formRowCss}>
-            <div>
-              ID: {userToken}
-            </div>
             <div>
               { renderRoomIdForm() }
             </div>
