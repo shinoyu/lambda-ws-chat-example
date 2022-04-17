@@ -55,9 +55,10 @@ export const useChatConnection = () => {
     const reciveHandle = useCallback((event: IMessageEvent) => {
         const message = eventToMessage(event);
         console.log("Received: '" + message.body + "'")
-        const list = [...messages, message]
-        setMessages(list)
-    }, [client, setMessages])
+        setMessages((before) => {
+            return [...before, message]
+        })
+    }, [client])
 
     const sendMessage = useCallback((message: Message) => {
         const data = JSON.stringify({
