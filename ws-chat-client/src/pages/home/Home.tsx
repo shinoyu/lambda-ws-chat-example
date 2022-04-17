@@ -4,19 +4,19 @@ import { useChatConnection, Message } from '../../hooks/useChatConnection';
 import { formCss, formRowCss } from './Home.css';
 
 export const Home = (Props) => {
-    const wsHost = "";
     const connectionId = useMemo(() => { return Math.random().toString(36).slice(-8)}, [])
+    const userToken = useMemo(() => { return Math.random().toString(36).slice(-8)}, [])
     const [state, setState] = useState({
       message: "",
       roomId: "",
     });
 
-    const {openWs, isConnected, sendMessage, messages } = useChatConnection()
+    const {openWs, isConnected, sendMessage, messages } = useChatConnection(userToken)
     const renderMessages = useCallback(() =>  {
         return <>
           {messages.forEach((msg) => {
             // TDDO: 後で分岐考える
-            if (msg.senderId === connectionId) {
+            if (userToken === msg.senderId) {
                 <div>{ msg.body }</div>
             } else {
                 <div>{ msg.body }</div>
@@ -60,19 +60,19 @@ export const Home = (Props) => {
     const handleSubmit = useCallback((e) => {
       if (e) e.preventDefault();
       sendMessage({
-        senderId: connectionId,
+        senderId: undefined,
         body: state.message,
         roomId: state.roomId,
         attachments: []
       });
+      setState({...state, message: ""});
     }, [state, sendMessage])
 
     return <>
       <main>
-        <div>{renderMessages()}</div>
         <div className={formRowCss}>
             <div>
-              ID: {connectionId}
+              ID: {userToken}
             </div>
             <div>
               { renderRoomIdForm() }
@@ -92,6 +92,7 @@ export const Home = (Props) => {
           </div>
           <button type='submit'>Send</button>
         </form>
+        <div>{renderMessages()}</div>
       </main>
     </> 
 }

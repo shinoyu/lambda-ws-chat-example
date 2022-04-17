@@ -2,19 +2,30 @@ import { useCallback, useEffect, useMemo, useState, } from "react"
 import { w3cwebsocket, IMessageEvent }  from 'websocket'
 
 export type Message = {
+    senderId: string | undefined
     body: string,
-    senderId: string,
     roomId: string
     attachments: Attachemnt[] 
 }
+
 export type Attachemnt = {
     contentType: string,
     url: string
 }
+const eventToMessage = (event: IMessageEvent): Message => {
+    switch(typeof event.data) {
+        case 'string': {
+            return JSON.parse(event.data)
+        }
+        default: {
+            return JSON.parse(event.data.toString())
+        }
+    }
+}
 
-export const useChatConnection = () => {
-    const [connectionId, setConnectionId ] = useState(null)
-    const [messages, setMessages ] = useState([] as Message[])
+export const useChatConnection = (userToken: string) => {
+    const [senderId, _setSenderId ] = useState(userToken)
+    const [messages, setMessages ] = useState(() => { return [] as Message[]})
     const [isConnected, setIsConnected] = useState(false)
     const [client, setClient] = useState(null as unknown as w3cwebsocket)
 
@@ -42,23 +53,24 @@ export const useChatConnection = () => {
         setIsConnected(true)
     }, [client])
     
-    const reciveHandle = useCallback((message: IMessageEvent) => {
-        // TODO: received message action
-        if (typeof message.data === 'string') {
-          console.log("Received: '" + message.data + "'")
-        }
-    }, [client])
+    const reciveHandle = useCallback((event: IMessageEvent) => {
+        const message = eventToMessage(event);
+        console.log("Received: '" + message.body + "'")
+        const list = [...messages, message]
+        setMessages(list)
+    }, [client, setMessages])
 
     const sendMessage = useCallback((message: Message) => {
         const data = JSON.stringify({
-            action: 'sendmessage',  ...message
+            ...message,
+            senderId: senderId,
+            action: 'sendmessage'
         })
         client.send(data)
     }, [client])
     
     return {
         openWs,
-        connectionId,
         messages,
         sendMessage,
         isConnected
