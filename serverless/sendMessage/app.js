@@ -1,10 +1,20 @@
 const { CONNECTION_TABLE_NAME, MESSAGE_TABLE_NAME } = process.env
 const AWS = require('aws-sdk');
-// import { ApiGatewayManagementApiClient } from "@aws-sdk/client-apigatewaymanagementapi";
 
-exports.handler = async (event, context) => {
-  const roomId = JSON.parse(event.body).roomId
-  const senderConnectionId = event.requestContext.connectionId
+exports.handler = async (event, context, callback) => {
+  let roomId = ''
+  const message = JSON.parse(event.body) 
+  console.log(`receive message: ${JSON.stringify(message)}`)
+  if(message.roomId) { 
+    roomId = message.roomId;
+  } else {
+    callback(null, {
+      statusCode: 500,
+      body: "need roomId Params"
+    });
+  }
+
+  // const senderConnectionId = event.requestContext.connectionId
   const dynamoClient = new AWS.DynamoDB({
     apiVersion: '2012-08-10',
     region: process.env.AWS_REGION 
@@ -14,30 +24,41 @@ exports.handler = async (event, context) => {
     endpoint: event.requestContext.domainName + '/' + event.requestContext.stage
   })
 
+  // TODO: add message db
+
   const queryParams = {
     TableName: CONNECTION_TABLE_NAME,
-    KeyConditionExpression: "#ROOMID = :ROOMID",
-    ExpressionAttributeNames: { "#ROOMID": "roomId" },
-    ExpressionAttributeValues: { ":ROOMID": roomId },
+    KeyConditionExpression: "roomId = :roomId",
+    ExpressionAttributeValues: { ":roomId": { "S": roomId }},
+    IndexName: 'roomId_index'
   }
   const connectionData = await dynamoClient.query(queryParams).promise()
-
-
-  const postData = JSON.parse(event.body).data
+  const senderConnectionId = event.requestContext.connectionId
+  const postData = JSON.stringify({
+    senderId: message.senderId,
+    body: message.body,
+    roomId: roomId,
+    attachments: []
+  })
   // TODO: ここで未読み込みのデータを引っ張ってきて、それも一緒に送信すること
+  console.log(`data: ${postData}`)
 
-
-  const postCalls = connectionData.Items.map(async ({ connectionId }) => {
-    if (senderConnectionId !== connectionId) {
+  const postCalls = connectionData.Items.map(async (record) => {
+    const connectionId = record.connectionId.S
     await apigwManagementClient.postToConnection({ ConnectionId: connectionId, Data: postData }).promise()
-    }
   })
 
   try {
     await Promise.all(postCalls)
-  } catch (e) {
-    return { statusCode: 500, body: e.stack }
+  } catch (err) {
+    console.error(err)
+    callback(null, {
+      statusCode: 500,
+      body: 'Failed to connect: ' + JSON.stringify(err)
+    });
   }
-
-  return { statusCode: 200, body: 'Data sent.' }
+  callback(null, {
+    statusCode: 200,
+    body: 'Data sent.'
+  });
 }
