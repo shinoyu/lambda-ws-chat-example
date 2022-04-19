@@ -4,6 +4,7 @@ import { useChatConnection, Message } from '../../hooks/useChatConnection';
 import { formCss, formRowCss } from './Home.css';
 
 export const Home = (Props) => {
+    const wsHost =  import.meta.env.VITE_WS_CHANNEL_URL
     const [state, setState] = useState({
       message: "",
       roomId: "",
@@ -14,7 +15,6 @@ export const Home = (Props) => {
     const renderMessages = useCallback(() =>  {
         return <>
           {messages.map((msg) => {
-            // TDDO: 後で分岐考える
             if (state.userToken === msg.senderId) {
               return <div>
                 { `${msg.senderId}(my): ${msg.body}` }
