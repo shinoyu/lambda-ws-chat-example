@@ -66,6 +66,29 @@ export const Home = (Props) => {
       }
     }
 
+    const renderMessageForm = () => {
+      if (isConnected) {
+        return <>
+          <form className={formCss} onSubmit={handleSubmit} >
+            <div className={formRowCss}>
+              <label>
+                  Message:
+                  <input
+                      type="text"
+                      name="message"
+                      value={state.message}
+                      onChange={handleChange}
+                  />
+              </label>
+            </div>
+            <button type='submit'>Send</button>
+          </form>
+        </>
+      } else {
+        return <></>
+      }
+    }
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement> ) => {
       setState({...state, [event.target.name]: event.target.value });
     }
@@ -93,20 +116,9 @@ export const Home = (Props) => {
               { renderRoomIdForm() }
             </div>
         </div>
-        <form className={formCss} onSubmit={handleSubmit} >
-          <div className={formRowCss}>
-            <label>
-                Message:
-                <input
-                    type="text"
-                    name="message"
-                    value={state.message}
-                    onChange={handleChange}
-                />
-            </label>
-          </div>
-          <button type='submit'>Send</button>
-        </form>
+        <div>
+          { renderMessageForm() }
+        </div>
         <div>{renderMessages()}</div>
       </main>
     </> 
