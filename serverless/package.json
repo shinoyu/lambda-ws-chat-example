@@ -5,6 +5,6 @@
         "serverless-layers": "^2.5.4-beta.1"
     },
     "dependencies": {
-        "aws-sdk": "^2.1102.0"
+        "aws-sdk": "^2.1354.0"
     }
 }
